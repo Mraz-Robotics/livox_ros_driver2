@@ -292,6 +292,9 @@ else(ROS_EDITION STREQUAL "ROS2")
     get_target_property(LIVOX_INTERFACES_INCLUDE_DIRECTORIES ${LIVOX_INTERFACE_TARGET} INTERFACE_INCLUDE_DIRECTORIES)
   endif()
 
+  set(LIVOX_INTERFACES_INCLUDE_DIRECTORIES "~/ros2_ws/src/livox_ros_driver2/msg")
+
+
   # include file direcotry
   target_include_directories(${PROJECT_NAME} PUBLIC
     ${PCL_INCLUDE_DIRS}

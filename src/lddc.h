@@ -44,6 +44,7 @@ typedef enum {
   kLivoxCustomMsg = 1,
   kPclPxyziMsg = 2,
   kLivoxImuMsg = 3,
+  kPointCloud2LivoxCustomMsg = 4,
 } TransferType;
 
 /** Type-Definitions based on ROS versions */
@@ -102,6 +103,7 @@ class Lddc final {
 
   void PublishPointcloud2(LidarDataQueue *queue, uint8_t index);
   void PublishCustomPointcloud(LidarDataQueue *queue, uint8_t index);
+  void PublishBothPointcloud2AndCustomPointCloud(LidarDataQueue *queue, uint8_t index);
   void PublishPclMsg(LidarDataQueue *queue, uint8_t index);
 
   void PublishImuData(LidarImuDataQueue& imu_data_queue, const uint8_t index);
@@ -113,6 +115,7 @@ class Lddc final {
   void InitCustomMsg(CustomMsg& livox_msg, const StoragePacket& pkg, uint8_t index);
   void FillPointsToCustomMsg(CustomMsg& livox_msg, const StoragePacket& pkg);
   void PublishCustomPointData(const CustomMsg& livox_msg, const uint8_t index);
+
 
   void InitPclMsg(const StoragePacket& pkg, PointCloud& cloud, uint64_t& timestamp);
   void FillPointsToPclMsg(const StoragePacket& pkg, PointCloud& pcl_msg);
@@ -127,7 +130,9 @@ class Lddc final {
 #ifdef BUILDING_ROS2
   PublisherPtr CreatePublisher(uint8_t msg_type, std::string &topic_name, uint32_t queue_size);
 #endif
-
+  
+  PublisherPtr GetCurrentPointCloud2Publisher(uint8_t index);
+  PublisherPtr GetCurrentCustomPublisher(uint8_t index);
   PublisherPtr GetCurrentPublisher(uint8_t index);
   PublisherPtr GetCurrentImuPublisher(uint8_t index);
 
@@ -145,12 +150,20 @@ class Lddc final {
   bool enable_imu_bag_;
   PublisherPtr private_pub_[kMaxSourceLidar];
   PublisherPtr global_pub_;
+  PublisherPtr private_pc2_pub_[kMaxSourceLidar];
+  PublisherPtr global_pc2_pub_;
+  PublisherPtr private_custom_pub_[kMaxSourceLidar];
+  PublisherPtr global_custom_pub_;
   PublisherPtr private_imu_pub_[kMaxSourceLidar];
   PublisherPtr global_imu_pub_;
   rosbag::Bag *bag_;
 #elif defined BUILDING_ROS2
   PublisherPtr private_pub_[kMaxSourceLidar];
   PublisherPtr global_pub_;
+  PublisherPtr private_pc2_pub_[kMaxSourceLidar];
+  PublisherPtr global_pc2_pub_;
+  PublisherPtr private_custom_pub_[kMaxSourceLidar];
+  PublisherPtr global_custom_pub_;
   PublisherPtr private_imu_pub_[kMaxSourceLidar];
   PublisherPtr global_imu_pub_;
 #endif
